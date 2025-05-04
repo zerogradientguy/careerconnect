@@ -19,6 +19,7 @@ import {
   FileText,
   Globe,
 } from "lucide-react"
+import { getBackendUrl } from '../utils/getBackendUrl'
 
 // Helper function to safely parse JSON or return an empty array
 const safeJSONParse = (jsonString) => {
@@ -76,6 +77,10 @@ const JobDetail = () => {
   }
 
   const handleApply = () => {
+    if (job && job.userType && job.userType !== 'jobSeeker') {
+      alert('Only job seekers can apply for jobs.');
+      return;
+    }
     setIsApplying(true)
   }
 
@@ -225,7 +230,7 @@ const JobDetail = () => {
               <div className="flex flex-col md:flex-row md:items-start">
                 <div className="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
                   <img
-                    src={job.companyLogo || "/placeholder.svg?height=60&width=60"}
+                    src={getBackendUrl(job.companyLogo) || "/placeholder.svg?height=60&width=60"}
                     alt={`${job.company} logo`}
                     className="w-16 h-16 object-contain rounded-md border border-gray-200"
                   />
@@ -309,11 +314,11 @@ const JobDetail = () => {
               <p className="text-gray-700 mb-6">{job.description}</p>
 
               {/* Requirements */}
-              {job.requirements && (
+              {job.requirements && job.requirements.length > 0 && (
                 <>
                   <h4 className="text-lg font-semibold text-gray-900 mb-3">Requirements</h4>
                   <ul className="list-disc pl-5 mb-6 space-y-2">
-                    {safeJSONParse(job.requirements).map((req, index) => (
+                    {job.requirements.map((req, index) => (
                       <li key={index} className="text-gray-700">
                         {req}
                       </li>
@@ -323,11 +328,11 @@ const JobDetail = () => {
               )}
 
               {/* Responsibilities */}
-              {job.responsibilities && (
+              {job.responsibilities && job.responsibilities.length > 0 && (
                 <>
                   <h4 className="text-lg font-semibold text-gray-900 mb-3">Responsibilities</h4>
                   <ul className="list-disc pl-5 mb-6 space-y-2">
-                    {safeJSONParse(job.responsibilities).map((resp, index) => (
+                    {job.responsibilities.map((resp, index) => (
                       <li key={index} className="text-gray-700">
                         {resp}
                       </li>
@@ -337,11 +342,11 @@ const JobDetail = () => {
               )}
 
               {/* Benefits */}
-              {job.benefits && (
+              {job.benefits && job.benefits.length > 0 && (
                 <>
                   <h4 className="text-lg font-semibold text-gray-900 mb-3">Benefits</h4>
                   <ul className="list-disc pl-5 space-y-2">
-                    {safeJSONParse(job.benefits).map((benefit, index) => (
+                    {job.benefits.map((benefit, index) => (
                       <li key={index} className="text-gray-700">
                         {benefit}
                       </li>

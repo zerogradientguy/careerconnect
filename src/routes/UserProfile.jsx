@@ -25,12 +25,14 @@ import {
   ArrowRight,
   FileText,
 } from "lucide-react"
+import { getBackendUrl } from '../utils/getBackendUrl'
 
 const UserProfile = () => {
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [userType, setUserType] = useState(null)
+  const [applicationCounts, setApplicationCounts] = useState({ pending: 0, reviewed: 0, interviewed: 0 })
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -99,6 +101,16 @@ const UserProfile = () => {
         const profileData = await profileResponse.json()
         console.log("Profile data received:", profileData) // Log the profile data to see its structure
         setProfile(profileData)
+        // Fetch applications and count statuses
+        const appRes = await fetch("http://localhost:5000/api/applications", { credentials: "include" })
+        if (appRes.ok) {
+          const applications = await appRes.json()
+          const counts = { pending: 0, reviewed: 0, interviewed: 0 }
+          applications.forEach(app => {
+            if (counts[app.status] !== undefined) counts[app.status]++
+          })
+          setApplicationCounts(counts)
+        }
       } catch (err) {
         console.error("Error fetching profile:", err)
         setError(err.message || "An error occurred while fetching your profile")
@@ -193,7 +205,7 @@ const UserProfile = () => {
                 </Link>
                 {profile.resumeUrl && (
                   <a
-                    href={profile.resumeUrl}
+                    href={getBackendUrl(profile.resumeUrl)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors flex items-center"
@@ -362,20 +374,20 @@ const UserProfile = () => {
             >
               <FileText className="h-4 w-4 mr-2" />
               View All Applications
-                  </Link>
-                </div>
+            </Link>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-yellow-50 p-4 rounded-lg">
               <p className="text-sm text-yellow-600 font-medium">Pending</p>
-              <p className="text-2xl font-bold text-gray-900">{profile.pendingApplications || 0}</p>
+              <p className="text-2xl font-bold text-gray-900">{applicationCounts.pending}</p>
             </div>
             <div className="bg-blue-50 p-4 rounded-lg">
               <p className="text-sm text-blue-600 font-medium">Reviewed</p>
-              <p className="text-2xl font-bold text-gray-900">{profile.reviewedApplications || 0}</p>
+              <p className="text-2xl font-bold text-gray-900">{applicationCounts.reviewed}</p>
             </div>
             <div className="bg-green-50 p-4 rounded-lg">
               <p className="text-sm text-green-600 font-medium">Interviewed</p>
-              <p className="text-2xl font-bold text-gray-900">{profile.interviewedApplications || 0}</p>
+              <p className="text-2xl font-bold text-gray-900">{applicationCounts.interviewed}</p>
             </div>
           </div>
         </div>
@@ -392,7 +404,7 @@ const UserProfile = () => {
           <div className="flex flex-col items-center">
             {profile.logoUrl ? (
               <img
-                src={profile.logoUrl || "/placeholder.svg"}
+                src={getBackendUrl(profile.logoUrl) || "/placeholder.svg"}
                 alt={`${profile.companyName} logo`}
                 className="w-24 h-24 object-contain mb-4 rounded-lg border border-gray-200"
               />
