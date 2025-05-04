@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, session
+from flask import Flask, request, jsonify, session, send_from_directory
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
@@ -449,8 +449,8 @@ def search_jobs():
     # Convert to dict
     jobs_data = [job.to_dict() for job in jobs]
     
-    # If user is logged in, calculate match scores using the Word2Vec model
-    if 'user_id' in session and word2vec_model:
+    # If user is logged in, calculate match scores
+    if 'user_id' in session:
         user_id = session['user_id']
         user = User.query.get(user_id)
         
@@ -458,16 +458,25 @@ def search_jobs():
             # Get user's skills
             skills = [skill.name for skill in Skill.query.filter_by(user_id=user_id).all()]
             
-            # Calculate match scores
-            for job_data in jobs_data:
-                job_description = Job.query.get(job_data['id']).description
-                match_score = calculate_match_score(word2vec_model, skills, job_description)
-                job_data['matchScore'] = match_score
-            
-            # Sort by match score (highest first)
-            jobs_data.sort(key=lambda x: x.get('matchScore', 0), reverse=True)
+            if skills:  # Only calculate scores if user has skills
+                # Get job descriptions
+                job_descriptions = [job.description for job in jobs]
+                
+                # Calculate match scores for all jobs at once
+                match_scores = calculate_seeker_to_jobs_scores(word2vec_model, skills, job_descriptions)
+                
+                # Add scores to job data
+                for job_data, score in zip(jobs_data, match_scores):
+                    job_data['matchScore'] = score
+                
+                # Sort by match score (highest first)
+                jobs_data.sort(key=lambda x: x.get('matchScore', 0), reverse=True)
+            else:
+                # If no skills, set all scores to None
+                for job_data in jobs_data:
+                    job_data['matchScore'] = None
         else:
-            # For employers or non-logged in users, use a placeholder
+            # For employers or non-logged in users, set scores to None
             for job_data in jobs_data:
                 job_data['matchScore'] = None
     
@@ -853,6 +862,18 @@ def update_application_status(application_id):
     db.session.commit()
     
     return jsonify({'message': 'Application status updated successfully'}), 200
+
+@app.route('/uploads/<path:filename>')
+def download_file(filename):
+    """Serve uploaded files"""
+    try:
+        return send_from_directory(
+            app.config['UPLOAD_FOLDER'],
+            filename,
+            as_attachment=True
+        )
+    except Exception as e:
+        return jsonify({'error': 'File not found'}), 404
 
 if __name__ == '__main__':
     app.run(debug=True)

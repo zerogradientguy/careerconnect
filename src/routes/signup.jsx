@@ -186,7 +186,7 @@ const SignUp = ({ setIsAuthenticated, setUser }) => {
             {/* Full Name field */}
             <div>
               <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
-                Full Name
+                Full Name <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -199,6 +199,7 @@ const SignUp = ({ setIsAuthenticated, setUser }) => {
                   autoComplete="name"
                   value={formData.fullName}
                   onChange={handleChange}
+                  required
                   className={`block w-full pl-10 pr-3 py-2 border ${
                     errors.fullName ? "border-red-300" : "border-gray-300"
                   } rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
@@ -211,7 +212,7 @@ const SignUp = ({ setIsAuthenticated, setUser }) => {
             {/* Email field */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email
+                Email <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -224,6 +225,7 @@ const SignUp = ({ setIsAuthenticated, setUser }) => {
                   autoComplete="email"
                   value={formData.email}
                   onChange={handleChange}
+                  required
                   className={`block w-full pl-10 pr-3 py-2 border ${
                     errors.email ? "border-red-300" : "border-gray-300"
                   } rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
@@ -236,7 +238,7 @@ const SignUp = ({ setIsAuthenticated, setUser }) => {
             {/* Password field */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                Password
+                Password <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -249,21 +251,22 @@ const SignUp = ({ setIsAuthenticated, setUser }) => {
                   autoComplete="new-password"
                   value={formData.password}
                   onChange={handleChange}
-                  onFocus={() => setShowPasswordRequirements(true)}
+                  required
                   className={`block w-full pl-10 pr-10 py-2 border ${
                     errors.password ? "border-red-300" : "border-gray-300"
                   } rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
-                  placeholder="Create a password"
+                  placeholder="Enter your password"
+                  onFocus={() => setShowPasswordRequirements(true)}
+                  onBlur={() => setShowPasswordRequirements(false)}
                 />
-                <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="text-gray-400 hover:text-gray-500 focus:outline-none"
-                  >
-                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400"
+                  onClick={() => setShowPassword(!showPassword)}
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </button>
               </div>
               {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
 
@@ -333,7 +336,7 @@ const SignUp = ({ setIsAuthenticated, setUser }) => {
             {/* Confirm Password field */}
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
-                Confirm Password
+                Confirm Password <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -346,27 +349,29 @@ const SignUp = ({ setIsAuthenticated, setUser }) => {
                   autoComplete="new-password"
                   value={formData.confirmPassword}
                   onChange={handleChange}
+                  required
                   className={`block w-full pl-10 pr-10 py-2 border ${
                     errors.confirmPassword ? "border-red-300" : "border-gray-300"
                   } rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
                   placeholder="Confirm your password"
                 />
-                <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="text-gray-400 hover:text-gray-500 focus:outline-none"
-                  >
-                    {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  tabIndex={-1}
+                >
+                  {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </button>
               </div>
               {errors.confirmPassword && <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>}
             </div>
 
             {/* User Type selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">I am a:</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Account Type <span className="text-red-500">*</span>
+              </label>
               <div className="grid grid-cols-2 gap-4">
                 <div
                   className={`border rounded-md p-3 cursor-pointer ${
@@ -409,35 +414,20 @@ const SignUp = ({ setIsAuthenticated, setUser }) => {
               </div>
             </div>
 
-            {/* Terms and Conditions */}
-            <div>
-              <div className="flex items-start">
-                <div className="flex items-center h-5">
-                  <input
-                    id="agreeToTerms"
-                    name="agreeToTerms"
-                    type="checkbox"
-                    checked={formData.agreeToTerms}
-                    onChange={handleChange}
-                    className={`h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded ${
-                      errors.agreeToTerms ? "border-red-300" : ""
-                    }`}
-                  />
-                </div>
-                <div className="ml-3 text-sm">
-                  <label htmlFor="agreeToTerms" className="font-medium text-gray-700">
-                    I agree to the{" "}
-                    <a href="#" className="text-blue-600 hover:text-blue-500">
-                      Terms of Service
-                    </a>{" "}
-                    and{" "}
-                    <a href="#" className="text-blue-600 hover:text-blue-500">
-                      Privacy Policy
-                    </a>
-                  </label>
-                </div>
-              </div>
-              {errors.agreeToTerms && <p className="mt-1 text-sm text-red-600">{errors.agreeToTerms}</p>}
+            {/* Agree to Terms */}
+            <div className="flex items-center">
+              <input
+                id="agreeToTerms"
+                name="agreeToTerms"
+                type="checkbox"
+                checked={formData.agreeToTerms}
+                onChange={handleChange}
+                required
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <label htmlFor="agreeToTerms" className="ml-2 block text-sm text-gray-700">
+                I agree to the <Link to="/terms" className="text-blue-600 hover:underline">terms and conditions</Link> <span className="text-red-500">*</span>
+              </label>
             </div>
 
             {/* Sign up button */}

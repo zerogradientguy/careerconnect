@@ -1,13 +1,14 @@
 "use client"
 
 import { useState } from "react"
-import { Menu, X, User, LogOut, Settings, ChevronDown } from "lucide-react"
-import { Link, useNavigate } from "react-router-dom"
+import { Menu, X, User, LogOut, Settings, ChevronDown, Briefcase, Search, FileText } from "lucide-react"
+import { Link, useNavigate, useLocation } from "react-router-dom"
 
 const Header = ({ isAuthenticated, user, onLogout, loading }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
   const navigate = useNavigate()
+  const location = useLocation()
 
   const handleLogout = async () => {
     await onLogout()
@@ -24,8 +25,42 @@ const Header = ({ isAuthenticated, user, onLogout, loading }) => {
     navigate('/dashboard')
   }
 
+  // Get navigation items based on current path and user type
+  const getNavigationItems = () => {
+    const path = location.pathname
+    const isJobSeeker = user?.userType === 'jobSeeker'
+    const isEmployer = user?.userType === 'employer'
+
+    // Common items for all authenticated users
+    const commonItems = [
+      { path: '/dashboard', label: 'Dashboard', icon: <Briefcase className="h-4 w-4 mr-2" /> },
+      { path: '/profile', label: 'Profile', icon: <User className="h-4 w-4 mr-2" /> },
+    ]
+
+    // Job seeker specific items
+    const jobSeekerItems = [
+      { path: '/jobs', label: 'Find Jobs', icon: <Search className="h-4 w-4 mr-2" /> },
+      { path: '/applications', label: 'My Applications', icon: <FileText className="h-4 w-4 mr-2" /> },
+    ]
+
+    // Employer specific items
+    const employerItems = [
+      { path: '/jobs/post', label: 'Post Job', icon: <Briefcase className="h-4 w-4 mr-2" /> },
+      { path: '/jobs/manage', label: 'Manage Jobs', icon: <Settings className="h-4 w-4 mr-2" /> },
+    ]
+
+    // Combine items based on user type
+    if (isJobSeeker) {
+      return [...commonItems, ...jobSeekerItems]
+    } else if (isEmployer) {
+      return [...commonItems, ...employerItems]
+    }
+
+    return commonItems
+  }
+
   if (loading) {
-    return <div>Loading...</div> // Or your loading component
+    return <div>Loading...</div>
   }
 
   return (
@@ -39,70 +74,72 @@ const Header = ({ isAuthenticated, user, onLogout, loading }) => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
-          <a href="#features" className="text-gray-600 font-medium relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-blue-600 hover:text-blue-600 after:transition-all after:duration-300 hover:after:w-full">
-            Features
-          </a>
-          <a href="#how-it-works" className="text-gray-600 font-medium relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-blue-600 hover:text-blue-600 after:transition-all after:duration-300 hover:after:w-full">
-            How It Works
-          </a>
-          <a href="#for-employers" className="text-gray-600 font-medium relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-blue-600 hover:text-blue-600 after:transition-all after:duration-300 hover:after:w-full">
-            For Employers
-          </a>
-          <a href="#for-job-seekers" className="text-gray-600 font-medium relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-blue-600 hover:text-blue-600 after:transition-all after:duration-300 hover:after:w-full">
-            For Job Seekers
-          </a>
-
           {isAuthenticated ? (
-            <div className="relative">
-              <button
-                onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                className="flex items-center space-x-2 text-gray-700 hover:text-blue-600"
-              >
-                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white">
-                  {user?.fullName?.charAt(0) || <User size={16} />}
-                </div>
-                <span>{user?.fullName || "User"}</span>
-                <ChevronDown className="ml-1 h-4 w-4" />
-              </button>
+            <>
+              {getNavigationItems().map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`flex items-center text-gray-600 font-medium relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-blue-600 hover:text-blue-600 after:transition-all after:duration-300 hover:after:w-full ${
+                    location.pathname === item.path ? 'text-blue-600 after:w-full' : ''
+                  }`}
+                >
+                  {item.icon}
+                  {item.label}
+                </Link>
+              ))}
 
-              {isProfileMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
-                  <Link
-                    to="/dashboard"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={navigateToDashboard}
-                  >
-                    Dashboard
-                  </Link>
-                  <Link
-                    to="/profile"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={navigateToProfile}
-                  >
-                    <User size={16} className="inline mr-2" />
-                    My Profile
-                  </Link>
-                  <Link
-                    to="/settings"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={() => setIsProfileMenuOpen(false)}
-                  >
-                    <Settings size={16} className="inline mr-2" />
-                    Settings
-                  </Link>
-                  <button
-                    onClick={() => {
-                      setIsProfileMenuOpen(false)
-                      handleLogout()
-                    }}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    <LogOut size={16} className="inline mr-2" />
-                    Sign Out
-                  </button>
-                </div>
-              )}
-            </div>
+              <div className="relative">
+                <button
+                  onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                  className="flex items-center space-x-2 text-gray-700 hover:text-blue-600"
+                >
+                  <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white">
+                    {user?.fullName?.charAt(0) || <User size={16} />}
+                  </div>
+                  <span>{user?.fullName || "User"}</span>
+                  <ChevronDown className="ml-1 h-4 w-4" />
+                </button>
+
+                {isProfileMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
+                    <Link
+                      to="/dashboard"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={navigateToDashboard}
+                    >
+                      Dashboard
+                    </Link>
+                    <Link
+                      to="/profile"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={navigateToProfile}
+                    >
+                      <User size={16} className="inline mr-2" />
+                      My Profile
+                    </Link>
+                    <Link
+                      to="/settings"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => setIsProfileMenuOpen(false)}
+                    >
+                      <Settings size={16} className="inline mr-2" />
+                      Settings
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setIsProfileMenuOpen(false)
+                        handleLogout()
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      <LogOut size={16} className="inline mr-2" />
+                      Sign Out
+                    </button>
+                  </div>
+                )}
+              </div>
+            </>
           ) : (
             <div className="flex space-x-3">
               <Link
@@ -131,51 +168,19 @@ const Header = ({ isAuthenticated, user, onLogout, loading }) => {
       {isMenuOpen && (
         <div className="md:hidden bg-white py-4 px-4 shadow-md">
           <nav className="flex flex-col space-y-4">
-            <a
-              href="#features"
-              className="text-gray-700 hover:text-blue-600 font-medium"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Features
-            </a>
-            <a
-              href="#how-it-works"
-              className="text-gray-700 hover:text-blue-600 font-medium"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              How It Works
-            </a>
-            <a
-              href="#for-employers"
-              className="text-gray-700 hover:text-blue-600 font-medium"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              For Employers
-            </a>
-            <a
-              href="#for-job-seekers"
-              className="text-gray-700 hover:text-blue-600 font-medium"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              For Job Seekers
-            </a>
-
             {isAuthenticated ? (
               <>
-                <Link
-                  to="/dashboard"
-                  className="text-gray-700 hover:text-blue-600 font-medium"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Dashboard
-                </Link>
-                <Link
-                  to="/profile"
-                  className="text-gray-700 hover:text-blue-600 font-medium"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  My Profile
-                </Link>
+                {getNavigationItems().map((item) => (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className="flex items-center text-gray-700 hover:text-blue-600 font-medium"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.icon}
+                    {item.label}
+                  </Link>
+                ))}
                 <button
                   onClick={() => {
                     setIsMenuOpen(false)
@@ -211,4 +216,4 @@ const Header = ({ isAuthenticated, user, onLogout, loading }) => {
   )
 }
 
-export default Header;
+export default Header

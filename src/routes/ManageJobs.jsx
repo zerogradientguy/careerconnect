@@ -36,9 +36,15 @@ const ManageJobs = () => {
   const fetchJobs = async () => {
     try {
       setLoading(true)
-      const response = await fetch("/api/jobs/employer", {
+      const response = await fetch("http://localhost:5000/api/jobs/employer", {
         credentials: "include",
       })
+
+      const contentType = response.headers.get("content-type")
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await response.text()
+        throw new Error("Server error: " + text)
+      }
 
       if (!response.ok) {
         throw new Error("Failed to fetch jobs")
@@ -99,47 +105,6 @@ const ManageJobs = () => {
 
     return true
   })
-
-  // For demo purposes, let's create some mock data
-  const mockJobs = [
-    {
-      id: 1,
-      title: "Senior Frontend Developer",
-      location: "New York, NY",
-      type: "Full-time",
-      salary: "$120,000 - $150,000",
-      postedDate: "2023-05-15",
-      applicationDeadline: "2023-06-15",
-      isActive: true,
-      isRemote: true,
-      applicationsCount: 12,
-    },
-    {
-      id: 2,
-      title: "UX/UI Designer",
-      location: "Remote",
-      type: "Contract",
-      salary: "$80,000 - $100,000",
-      postedDate: "2023-05-10",
-      applicationDeadline: "2023-06-10",
-      isActive: true,
-      isRemote: true,
-      applicationsCount: 8,
-    },
-    {
-      id: 3,
-      title: "Backend Engineer",
-      location: "San Francisco, CA",
-      type: "Full-time",
-      salary: "$130,000 - $160,000",
-      postedDate: "2023-05-05",
-      applicationDeadline: "2023-06-05",
-      isActive: false,
-      isExpired: true,
-      isRemote: false,
-      applicationsCount: 15,
-    },
-  ]
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -236,7 +201,7 @@ const ManageJobs = () => {
                 Try Again
               </button>
             </div>
-          ) : mockJobs.length === 0 ? (
+          ) : jobs.length === 0 ? (
             <div className="text-center py-12">
               <Briefcase className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">No Jobs Posted Yet</h3>
@@ -287,7 +252,7 @@ const ManageJobs = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {mockJobs.map((job) => (
+                  {jobs.map((job) => (
                     <tr key={job.id}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">

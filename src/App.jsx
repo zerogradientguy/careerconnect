@@ -211,6 +211,22 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
+                <Route
+                  path="/profile/edit"
+                  element={
+                    <ProtectedRoute>
+                      <ProfileCompletion user={user} />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/profile/edit/skills"
+                  element={
+                    <ProtectedRoute>
+                      <ProfileCompletion user={user} initialTab="skills" />
+                    </ProtectedRoute>
+                  }
+                />
                 {/* Job posting routes */}
                 <Route
                   path="/jobs/post"

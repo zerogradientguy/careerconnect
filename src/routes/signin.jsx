@@ -135,7 +135,7 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
             {/* Email field */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email
+                Email <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -159,7 +159,7 @@ const SignIn = ({ setIsAuthenticated, setUser }) => {
             <div>
               <div className="flex items-center justify-between mb-1">
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                  Password
+                  Password <span className="text-red-500">*</span>
                 </label>
                 <a href="#" className="text-sm font-medium text-blue-600 hover:text-blue-500">
                   Forgot password?

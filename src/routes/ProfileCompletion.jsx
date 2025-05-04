@@ -348,14 +348,15 @@ const ProfileCompletion = ({ user }) => {
               {/* Professional Title */}
               <div>
                 <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-                  Professional Title
+                  Professional Title <span className="text-red-500">*</span>
                 </label>
                 <input
                   id="title"
                   name="title"
                   type="text"
-                value={jobSeekerData.title}
-                onChange={handleJobSeekerInputChange}
+                  required
+                  value={jobSeekerData.title}
+                  onChange={handleJobSeekerInputChange}
                   className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="e.g. Senior Software Engineer"
                 />
@@ -364,14 +365,15 @@ const ProfileCompletion = ({ user }) => {
               {/* Phone Number */}
               <div>
                 <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                  Phone Number
+                  Phone Number <span className="text-red-500">*</span>
                 </label>
                 <input
                   id="phone"
                   name="phone"
                   type="tel"
-                value={jobSeekerData.phone}
-                onChange={handleJobSeekerInputChange}
+                  required
+                  value={jobSeekerData.phone}
+                  onChange={handleJobSeekerInputChange}
                   className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="e.g. +1 (555) 123-4567"
                 />
@@ -380,14 +382,15 @@ const ProfileCompletion = ({ user }) => {
               {/* Location */}
               <div>
                 <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">
-                  Location
+                  Location <span className="text-red-500">*</span>
                 </label>
                 <input
                   id="location"
                   name="location"
                   type="text"
-                value={jobSeekerData.location}
-                onChange={handleJobSeekerInputChange}
+                  required
+                  value={jobSeekerData.location}
+                  onChange={handleJobSeekerInputChange}
                   className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="e.g. New York, NY"
                 />
@@ -396,14 +399,15 @@ const ProfileCompletion = ({ user }) => {
               {/* Bio */}
               <div>
                 <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-1">
-                  Professional Summary
+                  Professional Summary <span className="text-red-500">*</span>
                 </label>
                 <textarea
                   id="bio"
                   name="bio"
                   rows={4}
-                value={jobSeekerData.bio}
-                onChange={handleJobSeekerInputChange}
+                  required
+                  value={jobSeekerData.bio}
+                  onChange={handleJobSeekerInputChange}
                   className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Brief description of your professional background and career goals"
                 />
@@ -411,7 +415,7 @@ const ProfileCompletion = ({ user }) => {
 
               {/* Resume Upload */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Resume/CV</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Resume/CV <span className="text-red-500">*</span></label>
                 <div
                   className="border-2 border-dashed border-gray-300 rounded-md p-6 flex flex-col items-center justify-center cursor-pointer hover:border-blue-500"
                   onClick={() => fileInputRef.current.click()}
@@ -419,7 +423,7 @@ const ProfileCompletion = ({ user }) => {
                   <input
                     type="file"
                     ref={fileInputRef}
-                  onChange={handleResumeFileChange}
+                    onChange={handleResumeFileChange}
                     className="hidden"
                     accept=".pdf,.doc,.docx"
                   />
@@ -471,7 +475,7 @@ const ProfileCompletion = ({ user }) => {
 
               {/* Selected Skills */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Your Skills</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Your Skills <span className="text-red-500">*</span></label>
                 <div className="flex flex-wrap gap-2 mb-4">
                 {jobSeekerData.skills.length > 0 ? (
                   jobSeekerData.skills.map((skill) => (
@@ -496,7 +500,7 @@ const ProfileCompletion = ({ user }) => {
 
               {/* Available Skills */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Suggested Skills</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Suggested Skills <span className="text-red-500">*</span></label>
                 <div className="border border-gray-300 rounded-md p-4 max-h-60 overflow-y-auto">
                   <div className="flex flex-wrap gap-2">
                     {availableSkills
@@ -518,7 +522,7 @@ const ProfileCompletion = ({ user }) => {
               {/* Custom Skill Input */}
               <div>
                 <label htmlFor="customSkill" className="block text-sm font-medium text-gray-700 mb-1">
-                  Add Custom Skill
+                  Add Custom Skill <span className="text-red-500">*</span>
                 </label>
                 <div className="flex">
                   <input
@@ -570,7 +574,7 @@ const ProfileCompletion = ({ user }) => {
 
               {/* Job Types */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Job Types</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Job Types <span className="text-red-500">*</span></label>
                 <div className="flex flex-wrap gap-2">
                   {jobTypeOptions.map((type) => (
                     <button
@@ -592,7 +596,7 @@ const ProfileCompletion = ({ user }) => {
 
               {/* Work Locations */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Work Location Preference</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Work Location Preference <span className="text-red-500">*</span></label>
                 <div className="flex flex-wrap gap-2">
                   {locationOptions.map((location) => (
                     <button
@@ -614,7 +618,7 @@ const ProfileCompletion = ({ user }) => {
 
               {/* Industries */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Preferred Industries</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Preferred Industries <span className="text-red-500">*</span></label>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                   {industryOptions.map((industry) => (
                     <button
@@ -636,7 +640,7 @@ const ProfileCompletion = ({ user }) => {
               {/* Salary Expectation */}
               <div>
                 <label htmlFor="minSalary" className="block text-sm font-medium text-gray-700 mb-1">
-                  Minimum Salary Expectation (Annual)
+                  Minimum Salary Expectation (Annual) <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -646,8 +650,9 @@ const ProfileCompletion = ({ user }) => {
                     id="minSalary"
                     name="minSalary"
                     type="text"
-                  value={jobSeekerData.minSalary}
-                  onChange={handleJobSeekerInputChange}
+                    required
+                    value={jobSeekerData.minSalary}
+                    onChange={handleJobSeekerInputChange}
                     className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     placeholder="e.g. 75,000"
                   />
@@ -656,7 +661,7 @@ const ProfileCompletion = ({ user }) => {
 
               {/* Availability */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Availability</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Availability <span className="text-red-500">*</span></label>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                   <div
                     className={`border rounded-md p-3 cursor-pointer ${
@@ -755,7 +760,7 @@ const ProfileCompletion = ({ user }) => {
 
             {/* Company Logo Upload */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Company Logo</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Company Logo <span className="text-red-500">*</span></label>
               <div
                 className="border-2 border-dashed border-gray-300 rounded-md p-6 flex flex-col items-center justify-center cursor-pointer hover:border-blue-500"
                 onClick={() => logoInputRef.current.click()}
@@ -796,12 +801,13 @@ const ProfileCompletion = ({ user }) => {
             {/* Company Name */}
             <div>
               <label htmlFor="companyName" className="block text-sm font-medium text-gray-700 mb-1">
-                Company Name
+                Company Name <span className="text-red-500">*</span>
               </label>
               <input
                 id="companyName"
                 name="companyName"
                 type="text"
+                required
                 value={employerData.companyName}
                 onChange={handleEmployerInputChange}
                 className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -812,11 +818,12 @@ const ProfileCompletion = ({ user }) => {
             {/* Industry */}
             <div>
               <label htmlFor="industry" className="block text-sm font-medium text-gray-700 mb-1">
-                Industry
+                Industry <span className="text-red-500">*</span>
               </label>
               <select
                 id="industry"
                 name="industry"
+                required
                 value={employerData.industry}
                 onChange={handleEmployerInputChange}
                 className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -833,11 +840,12 @@ const ProfileCompletion = ({ user }) => {
             {/* Company Size */}
             <div>
               <label htmlFor="companySize" className="block text-sm font-medium text-gray-700 mb-1">
-                Company Size
+                Company Size <span className="text-red-500">*</span>
               </label>
               <select
                 id="companySize"
                 name="companySize"
+                required
                 value={employerData.companySize}
                 onChange={handleEmployerInputChange}
                 className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -854,12 +862,13 @@ const ProfileCompletion = ({ user }) => {
             {/* Founded Year */}
             <div>
               <label htmlFor="foundedYear" className="block text-sm font-medium text-gray-700 mb-1">
-                Founded Year
+                Founded Year <span className="text-red-500">*</span>
               </label>
               <input
                 id="foundedYear"
                 name="foundedYear"
                 type="number"
+                required
                 value={employerData.foundedYear}
                 onChange={handleEmployerInputChange}
                 className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -872,7 +881,7 @@ const ProfileCompletion = ({ user }) => {
             {/* Company Website */}
             <div>
               <label htmlFor="companyWebsite" className="block text-sm font-medium text-gray-700 mb-1">
-                Company Website
+                Company Website <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -882,6 +891,7 @@ const ProfileCompletion = ({ user }) => {
                   id="companyWebsite"
                   name="companyWebsite"
                   type="url"
+                  required
                   value={employerData.companyWebsite}
                   onChange={handleEmployerInputChange}
                   className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -893,7 +903,7 @@ const ProfileCompletion = ({ user }) => {
             {/* Company Location */}
             <div>
               <label htmlFor="companyLocation" className="block text-sm font-medium text-gray-700 mb-1">
-                Company Location
+                Company Location <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -903,6 +913,7 @@ const ProfileCompletion = ({ user }) => {
                   id="companyLocation"
                   name="companyLocation"
                   type="text"
+                  required
                   value={employerData.companyLocation}
                   onChange={handleEmployerInputChange}
                   className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -914,12 +925,13 @@ const ProfileCompletion = ({ user }) => {
             {/* Company Description */}
             <div>
               <label htmlFor="companyDescription" className="block text-sm font-medium text-gray-700 mb-1">
-                Company Description
+                Company Description <span className="text-red-500">*</span>
               </label>
               <textarea
                 id="companyDescription"
                 name="companyDescription"
                 rows={4}
+                required
                 value={employerData.companyDescription}
                 onChange={handleEmployerInputChange}
                 className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -948,7 +960,7 @@ const ProfileCompletion = ({ user }) => {
             {/* Contact Name */}
             <div>
               <label htmlFor="contactName" className="block text-sm font-medium text-gray-700 mb-1">
-                Contact Person Name
+                Contact Person Name <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -958,6 +970,7 @@ const ProfileCompletion = ({ user }) => {
                   id="contactName"
                   name="contactName"
                   type="text"
+                  required
                   value={employerData.contactName}
                   onChange={handleEmployerInputChange}
                   className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -969,12 +982,13 @@ const ProfileCompletion = ({ user }) => {
             {/* Contact Title */}
             <div>
               <label htmlFor="contactTitle" className="block text-sm font-medium text-gray-700 mb-1">
-                Contact Person Title
+                Contact Person Title <span className="text-red-500">*</span>
               </label>
               <input
                 id="contactTitle"
                 name="contactTitle"
                 type="text"
+                required
                 value={employerData.contactTitle}
                 onChange={handleEmployerInputChange}
                 className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -985,7 +999,7 @@ const ProfileCompletion = ({ user }) => {
             {/* Contact Email */}
             <div>
               <label htmlFor="contactEmail" className="block text-sm font-medium text-gray-700 mb-1">
-                Contact Email
+                Contact Email <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -995,6 +1009,7 @@ const ProfileCompletion = ({ user }) => {
                   id="contactEmail"
                   name="contactEmail"
                   type="email"
+                  required
                   value={employerData.contactEmail}
                   onChange={handleEmployerInputChange}
                   className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -1006,7 +1021,7 @@ const ProfileCompletion = ({ user }) => {
             {/* Contact Phone */}
             <div>
               <label htmlFor="contactPhone" className="block text-sm font-medium text-gray-700 mb-1">
-                Contact Phone
+                Contact Phone <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -1016,6 +1031,7 @@ const ProfileCompletion = ({ user }) => {
                   id="contactPhone"
                   name="contactPhone"
                   type="tel"
+                  required
                   value={employerData.contactPhone}
                   onChange={handleEmployerInputChange}
                   className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"

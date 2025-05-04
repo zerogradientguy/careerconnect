@@ -18,6 +18,7 @@ import {
   UserCheck,
   Briefcase,
 } from "lucide-react"
+import { getBackendUrl } from '../utils/getBackendUrl'
 
 const JobApplications = () => {
   const { id: jobId } = useParams()
@@ -40,26 +41,33 @@ const JobApplications = () => {
       setLoading(true)
 
       // Fetch job details
-      const jobResponse = await fetch(`/api/jobs/${jobId}`, {
+      const jobResponse = await fetch(`http://localhost:5000/api/jobs/${jobId}`, {
         credentials: "include",
       })
 
+      const jobContentType = jobResponse.headers.get("content-type");
+      if (!jobContentType || !jobContentType.includes("application/json")) {
+        const text = await jobResponse.text();
+        throw new Error("Server error: " + text);
+      }
       if (!jobResponse.ok) {
         throw new Error("Failed to fetch job details")
       }
-
       const jobData = await jobResponse.json()
       setJob(jobData)
 
       // Fetch applications for this job
-      const applicationsResponse = await fetch(`/api/jobs/${jobId}/applications`, {
+      const applicationsResponse = await fetch(`http://localhost:5000/api/jobs/${jobId}/applications`, {
         credentials: "include",
       })
-
+      const appContentType = applicationsResponse.headers.get("content-type");
+      if (!appContentType || !appContentType.includes("application/json")) {
+        const text = await applicationsResponse.text();
+        throw new Error("Server error: " + text);
+      }
       if (!applicationsResponse.ok) {
         throw new Error("Failed to fetch applications")
       }
-
       const applicationsData = await applicationsResponse.json()
       setApplications(applicationsData)
     } catch (err) {
@@ -120,88 +128,8 @@ const JobApplications = () => {
     return app.status === filter
   })
 
-  // For demo purposes, let's create some mock data
-  const mockJob = {
-    id: Number(jobId),
-    title: "Senior Frontend Developer",
-    company: "TechCorp Inc.",
-    location: "New York, NY",
-    type: "Full-time",
-    postedDate: "2023-05-15",
-    applicationsCount: 5,
-  }
-
-  const mockApplications = [
-    {
-      id: 1,
-      jobId: Number(jobId),
-      applicantId: 101,
-      applicantName: "John Smith",
-      applicantEmail: "john.smith@example.com",
-      applicantPhone: "+1 (555) 123-4567",
-      resumeUrl: "/uploads/resume1.pdf",
-      coverLetter:
-        "I am excited to apply for this position with my 8 years of experience in frontend development. I have worked extensively with React, TypeScript, and modern frontend frameworks. My previous role at TechGiant involved leading a team of 5 developers to rebuild our customer-facing application, resulting in a 40% improvement in load times and a significant increase in user engagement.",
-      status: "pending",
-      appliedDate: "2023-05-20T10:30:00Z",
-    },
-    {
-      id: 2,
-      jobId: Number(jobId),
-      applicantId: 102,
-      applicantName: "Emily Johnson",
-      applicantEmail: "emily.johnson@example.com",
-      applicantPhone: "+1 (555) 234-5678",
-      resumeUrl: "/uploads/resume2.pdf",
-      coverLetter:
-        "With 6 years of experience in frontend development and a focus on user experience, I believe I would be a great fit for this role. I've led the development of several high-traffic web applications and have a strong background in optimizing performance and accessibility.",
-      status: "reviewed",
-      appliedDate: "2023-05-19T14:45:00Z",
-    },
-    {
-      id: 3,
-      jobId: Number(jobId),
-      applicantId: 103,
-      applicantName: "Michael Chen",
-      applicantEmail: "michael.chen@example.com",
-      applicantPhone: "+1 (555) 345-6789",
-      resumeUrl: "/uploads/resume3.pdf",
-      coverLetter:
-        "I have been following your company for years and am impressed with your innovative approach to frontend development. With my 7 years of experience and expertise in React, Next.js, and state management libraries, I am confident I can contribute significantly to your team.",
-      status: "interviewed",
-      appliedDate: "2023-05-18T09:15:00Z",
-      interviewDate: "2023-05-25T13:00:00Z",
-      interviewNotes: "Strong technical skills, good cultural fit. Moving to second round.",
-    },
-    {
-      id: 4,
-      jobId: Number(jobId),
-      applicantId: 104,
-      applicantName: "Sarah Williams",
-      applicantEmail: "sarah.williams@example.com",
-      applicantPhone: "+1 (555) 456-7890",
-      resumeUrl: "/uploads/resume4.pdf",
-      coverLetter:
-        "I am a frontend developer with 5 years of experience specializing in building responsive and accessible web applications. I have a passion for clean code and user-centric design, and I'm excited about the possibility of bringing my skills to your team.",
-      status: "rejected",
-      appliedDate: "2023-05-17T11:20:00Z",
-      feedback: "Good candidate but looking for someone with more experience in state management libraries.",
-    },
-    {
-      id: 5,
-      jobId: Number(jobId),
-      applicantId: 105,
-      applicantName: "David Rodriguez",
-      applicantEmail: "david.rodriguez@example.com",
-      applicantPhone: "+1 (555) 567-8901",
-      resumeUrl: "/uploads/resume5.pdf",
-      coverLetter:
-        "As a senior frontend developer with 10 years of experience across various industries, I bring a wealth of knowledge in building scalable and maintainable web applications. I'm particularly interested in your company's focus on innovative user experiences.",
-      status: "hired",
-      appliedDate: "2023-05-16T16:30:00Z",
-      offerDetails: "Start date: June 15, 2023. Salary: $130,000/year.",
-    },
-  ]
+  // Sort applications by matchScore (descending)
+  const sortedApplications = [...applications].sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0));
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -246,19 +174,19 @@ const JobApplications = () => {
           <>
             {/* Job Summary */}
             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">{mockJob.title}</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">{job?.title}</h2>
               <div className="flex flex-wrap gap-3 mb-4">
                 <div className="flex items-center text-gray-600">
                   <Briefcase className="h-5 w-5 mr-1 text-gray-500" />
-                  <span>{mockJob.company}</span>
+                  <span>{job?.company}</span>
                 </div>
                 <div className="flex items-center text-gray-600">
                   <User className="h-5 w-5 mr-1 text-gray-500" />
-                  <span>{mockApplications.length} Applicants</span>
+                  <span>{applications.length} Applicants</span>
                 </div>
                 <div className="flex items-center text-gray-600">
                   <Calendar className="h-5 w-5 mr-1 text-gray-500" />
-                  <span>Posted: {new Date(mockJob.postedDate).toLocaleDateString()}</span>
+                  <span>Posted: {job?.created_at ? new Date(job.created_at).toLocaleDateString() : ''}</span>
                 </div>
               </div>
               <div className="flex space-x-3">
@@ -286,7 +214,7 @@ const JobApplications = () => {
                     filter === "all" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-800 hover:bg-gray-200"
                   }`}
                 >
-                  All Applications ({mockApplications.length})
+                  All Applications ({applications.length})
                 </button>
                 <button
                   onClick={() => setFilter("pending")}
@@ -295,7 +223,7 @@ const JobApplications = () => {
                   }`}
                 >
                   <Clock className="h-4 w-4 mr-2" />
-                  Pending ({mockApplications.filter((a) => a.status === "pending").length})
+                  Pending ({applications.filter((a) => a.status === "pending").length})
                 </button>
                 <button
                   onClick={() => setFilter("reviewed")}
@@ -304,7 +232,7 @@ const JobApplications = () => {
                   }`}
                 >
                   <CheckCircle className="h-4 w-4 mr-2" />
-                  Reviewed ({mockApplications.filter((a) => a.status === "reviewed").length})
+                  Reviewed ({applications.filter((a) => a.status === "reviewed").length})
                 </button>
                 <button
                   onClick={() => setFilter("interviewed")}
@@ -313,7 +241,7 @@ const JobApplications = () => {
                   }`}
                 >
                   <UserCheck className="h-4 w-4 mr-2" />
-                  Interviewed ({mockApplications.filter((a) => a.status === "interviewed").length})
+                  Interviewed ({applications.filter((a) => a.status === "interviewed").length})
                 </button>
                 <button
                   onClick={() => setFilter("rejected")}
@@ -322,7 +250,7 @@ const JobApplications = () => {
                   }`}
                 >
                   <XCircle className="h-4 w-4 mr-2" />
-                  Rejected ({mockApplications.filter((a) => a.status === "rejected").length})
+                  Rejected ({applications.filter((a) => a.status === "rejected").length})
                 </button>
                 <button
                   onClick={() => setFilter("hired")}
@@ -331,13 +259,13 @@ const JobApplications = () => {
                   }`}
                 >
                   <Briefcase className="h-4 w-4 mr-2" />
-                  Hired ({mockApplications.filter((a) => a.status === "hired").length})
+                  Hired ({applications.filter((a) => a.status === "hired").length})
                 </button>
               </div>
             </div>
 
             {/* Applications list */}
-            {mockApplications.length === 0 ? (
+            {sortedApplications.length === 0 ? (
               <div className="bg-white rounded-lg shadow-sm p-8 text-center">
                 <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No Applications Yet</h3>
@@ -345,7 +273,7 @@ const JobApplications = () => {
               </div>
             ) : (
               <div className="space-y-6">
-                {mockApplications
+                {sortedApplications
                   .filter((app) => filter === "all" || app.status === filter)
                   .map((application) => (
                     <div key={application.id} className="bg-white rounded-lg shadow-sm p-6">
@@ -360,6 +288,11 @@ const JobApplications = () => {
                               <p className="text-gray-600">
                                 Applied: {new Date(application.appliedDate).toLocaleDateString()}
                               </p>
+                              {typeof application.matchScore === 'number' && (
+                                <span className="inline-block mt-1 px-2 py-1 text-xs rounded-full bg-green-100 text-green-800 font-semibold">
+                                  Match Score: {application.matchScore}%
+                                </span>
+                              )}
                             </div>
                           </div>
 
@@ -436,7 +369,7 @@ const JobApplications = () => {
                           </div>
 
                           <a
-                            href={application.resumeUrl}
+                            href={getBackendUrl(application.resumeUrl)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors flex items-center"
